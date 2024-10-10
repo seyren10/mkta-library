@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Session;
 
 class ItemController extends Controller
 {

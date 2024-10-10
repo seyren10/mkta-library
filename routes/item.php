@@ -17,6 +17,9 @@ Route::prefix('items')->controller(ItemController::class)->group(function () {
         Route::prefix('routings')->controller(RoutingController::class)->group(function () {
             Route::get('', 'index');
             Route::get('{id}', 'show');
+
+            Route::get('sequence/{sequence_index}/next', 'nextSequence');
+            Route::get('sequence/{sequence_index}/prev', 'prevSequence');
         });
     });
 });

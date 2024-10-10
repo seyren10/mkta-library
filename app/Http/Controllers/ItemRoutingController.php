@@ -19,10 +19,10 @@ class ItemRoutingController extends Controller
     }
 
 
-    public function show(ItemRouting $itemRouting): JsonResponse
+    public function show(ItemRouting $item_routing): JsonResponse
     {
         return response()->json([
-            'data' => $itemRouting->load('workCenter')->makeHidden('work_center_abbr')
+            'data' => $item_routing->load('workCenter')->makeHidden('work_center_abbr')
         ]);
     }
 }
