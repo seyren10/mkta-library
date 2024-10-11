@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
 {
@@ -35,8 +36,8 @@ class Item extends Model
         return $this->hasMany(ItemRouting::class, 'routing_no', 'routing_no')->orderBy('sequence_index');
     }
 
-    public function files()
+    public function files(): MorphMany
     {
-        return $this->morphMany(LibraryFile::class, 'filable', localKey: 'code');
+        return $this->morphMany(LibraryFile::class, 'filable', 'filable_type', 'filable_id', 'code');
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('library_files', function (Blueprint $table) {
             $table->id();
-            $table->morphs('filable');
+            $table->uuidMorphs('filable');
             $table->longText('path');
             $table->timestamps();
         });

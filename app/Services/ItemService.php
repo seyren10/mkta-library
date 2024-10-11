@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 
 class ItemService
 {
-
     public static function getItemCodes(): Collection
     {
         return Item::query()->pluck('code');

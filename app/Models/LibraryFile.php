@@ -10,7 +10,9 @@ class LibraryFile extends Model
 {
     use HasFactory;
 
-    public function fileable(): MorphTo
+    protected $fillable = ['path'];
+
+    public function filable(): MorphTo
     {
         return $this->morphTo();
     }
