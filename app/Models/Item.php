@@ -34,4 +34,9 @@ class Item extends Model
     {
         return $this->hasMany(ItemRouting::class, 'routing_no', 'routing_no')->orderBy('sequence_index');
     }
+
+    public function files()
+    {
+        return $this->morphMany(LibraryFile::class, 'filable', localKey: 'code');
+    }
 }
