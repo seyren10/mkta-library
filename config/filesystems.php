@@ -32,6 +32,7 @@ return [
         'library' => [
             'driver' => 'local',
             'root' => env('CUSTOM_STORAGE_PATH',  storage_path('app/private')),
+            'url' => env('APP_URL').'/library',
             'throw' => false,
             'max_upload_size' => env('MAX_UPLOAD_SIZE', 10000) //in Kb
         ],
@@ -77,7 +78,8 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        // public_path('storage') => storage_path('app/public'),
+        public_path('library') => env('CUSTOM_STORAGE_PATH',  storage_path('app/private'))
     ],
 
 ];

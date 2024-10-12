@@ -24,9 +24,11 @@ Route::prefix('items')
                 Route::get('sequence/{sequence_index}/prev', 'prevSequence');
             });
 
-        Route::prefix('{item}/uploads')
+        Route::prefix('{item}/files')
             ->controller(LibraryFileController::class)
             ->group(function () {
+                Route::get('documents', 'getDocuments');
+                Route::get('images', 'getImages');
                 Route::post('documents', 'uploadDocuments');
                 Route::post('images', 'uploadImages');
             });

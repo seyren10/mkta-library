@@ -25,7 +25,7 @@ class UploadDocumentsRequest extends FormRequest
         return [
             'docs' => ['required'],
             'docs.*' => [
-                File::types(['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'doc', 'docx', 'xls', 'xlsx', 'pdf', 'csv', 'mp4'])
+                File::types(['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'doc', 'docx', 'xls', 'xlsx', 'pdf', 'csv', 'mp4','mpeg4'])
                     ->max(config('filesystems.disks.library.max_upload_size'))
             ]
         ];
