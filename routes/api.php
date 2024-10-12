@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\ItemBomController;
-use App\Http\Controllers\ItemRoutingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ItemBomController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\WorkCenterController;
+use App\Http\Controllers\ItemRoutingController;
+use App\Http\Controllers\GenerateTokenController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();

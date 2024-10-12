@@ -47,7 +47,7 @@ class BusinessCentralHttpClient
     public function get(string $link): BcJsonData
     {
         try {
-            info('Getting Data from: ' . $link);
+            Log::driver('bc')->info('Getting Data from: ' . $link);
             $response = $this->client->get($link, $this->options);
         } catch (Exception $e) {
             Log::error($e->getMessage() . $e->getCode());
@@ -63,5 +63,4 @@ class BusinessCentralHttpClient
 
         return  $this->get($contextLink);
     }
-
 }

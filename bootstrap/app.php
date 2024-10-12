@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureThatUserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,12 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        ]);
+        $middleware->statefulApi();
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'admin' => EnsureThatUserIsAdmin::class
         ]);
 
         //
@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         $schedule
             ->command('bc:fetch_all')
-            ->everyMinute()
+            ->daily() //Run the task every day at midnight.
             ->runInBackground()
             ->withoutOverlapping();
     })

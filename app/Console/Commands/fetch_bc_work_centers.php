@@ -3,11 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Enums\BcContext;
+use Carbon\CarbonInterval;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral\BcDataTransformer;
 use App\Services\BusinessCentral\BcWorkCenterService;
 use App\Services\BusinessCentral\BusinessCentralHttpClient;
-use Carbon\CarbonInterval;
-use Illuminate\Console\Command;
 
 class fetch_bc_work_centers extends Command
 {
@@ -49,6 +50,6 @@ class fetch_bc_work_centers extends Command
 
         $endTime = time();
 
-        info('Execution Time: ' . CarbonInterval::seconds($endTime - $startTime)->forHumans());
+        Log::driver('bc')->info('Execution Time: ' . CarbonInterval::seconds($endTime - $startTime)->forHumans());
     }
 }

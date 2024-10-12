@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\BusinessCentral;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class BusinessCentralApiToken
 {
@@ -23,7 +24,7 @@ class BusinessCentralApiToken
 
     private function getToken(): array
     {
-        info('getting token');
+        Log::driver('bc')->info('getting token');
 
         $client = new Client();
 

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\BcContext;
 use Carbon\CarbonInterval;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral\BcDataTransformer;
 use App\Services\BusinessCentral\BcMaterialsService;
 use App\Services\BusinessCentral\BusinessCentralHttpClient;
@@ -49,6 +50,6 @@ class fetch_bc_materials extends Command
         }
 
         $endTime = time();
-        info('Execution Time: ' . CarbonInterval::seconds($endTime - $startTime)->forHumans());
+        Log::driver('bc')->info('Execution Time: ' . CarbonInterval::seconds($endTime - $startTime)->forHumans());
     }
 }
