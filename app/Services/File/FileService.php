@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\NoFilableRelationshipException;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class FileService
 {
@@ -21,11 +22,11 @@ class FileService
     }
 
 
-    public function addFile(string $path): static
+    public function addFile(string $path, LibraryFolder $folder): static
     {
         $cleanUrl = $this->cleanUrl($path);
 
-        $this->files->add($cleanUrl);
+        $this->files->add(['path' => $cleanUrl, 'folder' => $folder]);
         return $this;
     }
 
@@ -55,7 +56,7 @@ class FileService
     {
         $file = $this->store($uploadedFile, $folder, $appendedPath);
 
-        $this->addFile($file);
+        $this->addFile($file, $folder);
 
         return $this;
     }
@@ -82,16 +83,19 @@ class FileService
         $this->checkModel();
 
 
-        $this->model->files()->createMany($this->files->map(fn($file) => ['path' => $file]));
+        $this->model->files()->createMany($this->files->map(fn($file) => ['path' => $file['path'], 'file_type' => $file['folder']]));
         $this->files = new Collection();
     }
 
-    public function getFiles(): FileCollectionService
+    public function getFiles(LibraryFolder $folder = null): FileCollectionService
     {
         $this->checkModel();
 
-        $files =  $this->model->files()
-            ->pluck('path');
+        $files =  $this->model
+            ->files()
+            ->select(['path', 'file_type'])
+            ->when($folder, fn($query) => $query->where('file_type', $folder))->get();
+
         return new FileCollectionService($files);
     }
 

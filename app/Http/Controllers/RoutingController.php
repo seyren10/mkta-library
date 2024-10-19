@@ -21,14 +21,14 @@ class RoutingController extends Controller
         return ItemRoutingResource::collection($routings);
     }
 
-    public function show(Item $item, int $id): JsonResource
+    public function show(Item $item, int|string $id): JsonResource
     {
         /**
          * @var ItemRouting routing 
          */
 
         $routing = $item->itemRoutings()->findOrFail($id);
-        $boms = $item->itemBoms()->filterByWorkCenter($routing->work_center_abbr)->get();
+        $boms = $item->itemBoms()->with('material')->filterByWorkCenter($routing->work_center_abbr)->get();
 
         return new ItemRoutingResource($routing, $boms);
     }

@@ -14,7 +14,7 @@ class FileCollectionService
 
     public function fromFolder(LibraryFolder $folder): static
     {
-        $this->files = $this->files->filter(fn($path) =>  explode('/', $path)[0] === $folder->value);
+        $this->files = $this->files->filter(callback: fn($file) =>  $file['file_type'] === $folder);
 
         return $this;
     }
@@ -33,7 +33,12 @@ class FileCollectionService
 
     public function getAsUrl()
     {
+        return $this->get()->map(fn($file) => self::toUrl($file['path']));
+    }
+
+    public static function toUrl($path)
+    {
         $defaultDisk = config('filesystems.default');
-        return $this->get()->map(fn($path) => config("filesystems.disks.{$defaultDisk}.url") . '/' . $path);
+        return  config("filesystems.disks.{$defaultDisk}.url") . '/' . $path;
     }
 }

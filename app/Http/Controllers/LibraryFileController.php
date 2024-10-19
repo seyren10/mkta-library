@@ -18,8 +18,7 @@ class LibraryFileController extends Controller
     {
         $files =  $this->fileService
             ->setModel($item)
-            ->getFiles()
-            ->fromFolder(LibraryFolder::FILES)
+            ->getFiles(LibraryFolder::FILES)
             ->getAsUrl();
 
         return response()->json($files);
@@ -41,8 +40,7 @@ class LibraryFileController extends Controller
     {
         $images =  $this->fileService
             ->setModel($item)
-            ->getFiles()
-            ->fromFolder(LibraryFolder::IMAGES)
+            ->getFiles(LibraryFolder::IMAGES)
             ->getAsUrl();
 
         return response()->json($images);
