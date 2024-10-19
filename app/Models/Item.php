@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\LibraryFolder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;

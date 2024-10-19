@@ -2,15 +2,13 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Item;
-use App\Models\ItemBom;
-use App\Models\ItemRouting;
-use Illuminate\Support\Arr;
+use App\Services\File\FileCollectionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ItemResource extends JsonResource
 {
+
 
     /**
      * Transform the resource into an array.
@@ -22,7 +20,21 @@ class ItemResource extends JsonResource
         $data = parent::toArray($request);
 
         $data['item_routings'] = ItemRoutingResource::collection($this->whenLoaded('itemRoutings'));
-        unset($data['item_boms']);
+
+        // $data['thumbnail'] = $this->when($this->whenLoaded('files') && $this->files->isNotEmpty(), function () {
+        //     return FileCollectionService::toUrl($this->files->first()->path);
+        // });
+
+        $data['thumbnail'] = $this->whenLoaded('files', function () {
+            if ($this->files->isNotEmpty())
+                return FileCollectionService::toUrl($this->files->first()->path);
+        });
+
+        if ($data['thumbnail'] === null) {
+            unset($data['thumbnail']);
+        }
+
+        unset($data['item_boms'], $data['files']);
         return $data;
     }
 }
