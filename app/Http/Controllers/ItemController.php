@@ -7,15 +7,20 @@ use App\Enums\LibraryFolder;
 use Illuminate\Http\Request;
 
 use App\Http\Resources\ItemResource;
+use App\Services\ItemService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ItemController extends Controller
 {
-    public function index(Request $request): JsonResource
+    public function index(Request $request, ItemService $itemService): JsonResource
     {
         $perPage = $request->query('perPage') ?? 100;
-        $items = Item::with(['files' => fn($query) => $this->getFirstImageAsThumbnail($query)])
+
+        $searchQuery = $request->query('q');
+
+        $items = Item::when($searchQuery,  fn() => $itemService->search($request->q))
+            ->with(['files' => fn($query) => $this->getFirstImageAsThumbnail($query)])
             ->simplePaginate($perPage);
         return ItemResource::collection($items);
     }
