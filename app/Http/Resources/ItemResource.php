@@ -21,10 +21,6 @@ class ItemResource extends JsonResource
 
         $data['item_routings'] = ItemRoutingResource::collection($this->whenLoaded('itemRoutings'));
 
-        // $data['thumbnail'] = $this->when($this->whenLoaded('files') && $this->files->isNotEmpty(), function () {
-        //     return FileCollectionService::toUrl($this->files->first()->path);
-        // });
-
         $data['thumbnail'] = $this->whenLoaded('files', function () {
             if ($this->files->isNotEmpty())
                 return FileCollectionService::toUrl($this->files->first()->path);
