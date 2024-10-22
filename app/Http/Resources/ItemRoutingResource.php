@@ -22,13 +22,16 @@ class ItemRoutingResource extends JsonResource
     {
         $data =  parent::toArray($request);
         $data['work_center'] = $this->whenLoaded('workCenter', $this->workCenter);
+        $data['files'] = $this->whenLoaded('files', function () {
+            return  LibraryFilesResource::collection($this->files);
+        });
 
         $data['boms'] = $this->when($this->isCollection($this->itemBom), $this->itemBom);
 
         return $data;
     }
 
-    private function isCollection(mixed $item)
+    private function isCollection(mixed $item): bool
     {
         return $item instanceof Collection && $item !== null;
     }

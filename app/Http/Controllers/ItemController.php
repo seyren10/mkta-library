@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\FileType;
 use App\Models\Item;
 use App\Enums\LibraryFolder;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class ItemController extends Controller
 
         $items = Item::when($searchQuery,  fn() => $itemService->search($request->q))
             ->with(['files' => fn($query) => $this->getFirstImageAsThumbnail($query)])
-            ->simplePaginate($perPage);
+            ->simplePaginate($perPage)
+            ->withQueryString();
         return ItemResource::collection($items);
     }
 
@@ -39,7 +41,7 @@ class ItemController extends Controller
     private function getFirstImageAsThumbnail(MorphMany $query): MorphMany
     {
         return $query
-            ->where('file_type', LibraryFolder::IMAGES)
+            ->where('file_type', FileType::Images)
             ->limit(1);
     }
 }

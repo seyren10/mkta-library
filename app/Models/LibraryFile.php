@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\LibraryFolder;
+use App\Enums\FileType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -12,12 +12,12 @@ class LibraryFile extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['path', 'file_type'];
+    protected $fillable = ['path', 'file_type', 'name'];
 
     protected function casts(): array
     {
         return [
-            'file_type' => LibraryFolder::class
+            'file_type' => FileType::class
         ];
     }
     public function filable(): MorphTo
@@ -25,7 +25,7 @@ class LibraryFile extends Model
         return $this->morphTo();
     }
 
-    public function scopeOnFolder(Builder $query, LibraryFolder $folder)
+    public function scopeOnFolder(Builder $query, FileType $folder)
     {
         $query->where('file_type', $folder);
     }

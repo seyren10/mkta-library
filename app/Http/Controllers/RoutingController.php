@@ -24,11 +24,11 @@ class RoutingController extends Controller
     public function show(Item $item, int|string $id): JsonResource
     {
         /**
-         * @var ItemRouting routing 
+         * @var ItemRouting $routing 
          */
 
-        $routing = $item->itemRoutings()->findOrFail($id);
-        $boms = $item->itemBoms()->with('material')->filterByWorkCenter($routing->work_center_abbr)->get();
+        $routing = $item->itemRoutings()->with('files')->findOrFail($id);
+        $boms = $item->itemBoms()->with(['material'])->filterByWorkCenter($routing->work_center_abbr)->get();
 
         return new ItemRoutingResource($routing, $boms);
     }

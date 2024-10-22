@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\File;
 
-use App\Enums\LibraryFolder;
+use App\Enums\FileType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -22,11 +22,16 @@ class FileService
     }
 
 
-    public function addFile(string $path, LibraryFolder $folder): static
+    public function addFile(string $path, FileType $fileType, string $name): static
     {
         $cleanUrl = $this->cleanUrl($path);
 
-        $this->files->add(['path' => $cleanUrl, 'folder' => $folder]);
+        $this->files->add([
+            'path' => $cleanUrl,
+            'fileType' => $fileType,
+            'name' => $name
+        ]);
+
         return $this;
     }
 
@@ -37,9 +42,9 @@ class FileService
         return $this;
     }
 
-    public function store(UploadedFile $uploadedFile, LibraryFolder $folder, mixed $appendedPath): string
+    public function store(UploadedFile $uploadedFile, mixed $path): string
     {
-        $cleanUrl = $this->cleanUrl("{$folder->value}/{$appendedPath}");
+        $cleanUrl = $this->cleanUrl($path);
         return $uploadedFile->store($cleanUrl);
     }
 
@@ -47,16 +52,16 @@ class FileService
      * 
      *  Store and insert the record in the Database
      * @param \Illuminate\Http\UploadedFile $uploadedFile
-     * @param \App\Enums\LibraryFolder $folder Main folder from which the file will be save
-     * @param string $appendedPath usefull when you want to place the file on a subfolder base main $folder
+     * @param \App\Enums\FileType $folder Main folder from which the file will be save
+     * @param string $path usefull when you want to place the file main $folder
      * @return FileService
      */
 
-    public function storeAndAdd(UploadedFile $uploadedFile, LibraryFolder $folder, mixed $appendedPath): static
+    public function storeAndAdd(UploadedFile $uploadedFile, FileType $fileType, mixed $path): static
     {
-        $file = $this->store($uploadedFile, $folder, $appendedPath);
-
-        $this->addFile($file, $folder);
+        $file = $this->store($uploadedFile, $path);
+        $name = $uploadedFile->getClientOriginalPath();
+        $this->addFile($file, $fileType, $name);
 
         return $this;
     }
@@ -65,14 +70,14 @@ class FileService
     /**
      * Store and insert the record in the Database as Array
      * @param UploadedFile[] $uploadedFiles
-     * @param \App\Enums\LibraryFolder $folder Main folder from which the file will be save
-     * @param mixed $appendedPath usefull when you want to place the file on a subfolder base main $folder
+     * @param \App\Enums\FileType $folder Main folder from which the file will be save
+     * @param mixed $path usefull when you want to place the file main $folder
      * @return static
      */
-    public function storeAndAddMany(array $uploadedFiles, LibraryFolder $folder, mixed $appendedPath): static
+    public function storeAndAddMany(array $uploadedFiles, FileType $fileType, mixed $path): static
     {
         foreach ($uploadedFiles as $file) {
-            $this->storeAndAdd($file, $folder, $appendedPath);
+            $this->storeAndAdd($file, $fileType, $path);
         }
 
         return $this;
@@ -83,20 +88,19 @@ class FileService
         $this->checkModel();
 
 
-        $this->model->files()->createMany($this->files->map(fn($file) => ['path' => $file['path'], 'file_type' => $file['folder']]));
+        $this->model->files()->createMany($this->files
+            ->map(fn($file) => ['path' => $file['path'], 'file_type' => $file['fileType'], 'name' => $file['name']]));
         $this->files = new Collection();
     }
 
-    public function getFiles(LibraryFolder $folder = null): FileCollectionService
+    public function getFiles(FileType $fileType = null): Collection
     {
         $this->checkModel();
 
-        $files =  $this->model
+        return  $this->model
             ->files()
-            ->select(['path', 'file_type'])
-            ->when($folder, fn($query) => $query->where('file_type', $folder))->get();
-
-        return new FileCollectionService($files);
+            ->when($fileType, fn($query) => $query->where('file_type', $fileType))
+            ->get();
     }
 
     private function checkModel(): void

@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class ItemRouting extends Model
 {
@@ -22,6 +22,11 @@ class ItemRouting extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Item::class, "routing_no", "routing_no");
+    }
+
+    public function files(): MorphMany
+    {
+        return $this->morphMany(LibraryFile::class, 'filable');
     }
 
     /**
