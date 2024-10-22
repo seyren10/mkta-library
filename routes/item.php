@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ItemRoutingController;
+use App\Http\Controllers\ItemRoutingNoteController;
 use App\Http\Controllers\LibraryFileController;
 use App\Http\Controllers\RoutingController;
 
@@ -20,8 +21,10 @@ Route::prefix('items')
             ->controller(RoutingController::class)
             ->group(function () {
                 Route::get('', 'index');
-                Route::get('{id}', 'show');
-                Route::post('{id}/files', [LibraryFileController::class, 'itemRoutingUploadFiles']);
+                Route::prefix('{id}')->group(function () {
+                    Route::get('', 'show');
+                    Route::post('files', [LibraryFileController::class, 'itemRoutingUploadFiles']);
+                });
                 Route::get('sequence/{sequence_index}/next', 'nextSequence');
                 Route::get('sequence/{sequence_index}/prev', 'prevSequence');
             });

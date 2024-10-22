@@ -29,6 +29,11 @@ class ItemRouting extends Model
         return $this->morphMany(LibraryFile::class, 'filable');
     }
 
+    public function notes(): HasMany
+    {
+        return $this->hasMany(ItemRoutingNote::class, 'routing_no', 'id');
+    }
+
     /**
      * Get the instance of ItemRouting by its sequence_index field
      * @param \Illuminate\Database\Eloquent\Builder $query
