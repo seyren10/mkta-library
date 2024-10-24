@@ -7,7 +7,8 @@ namespace App\DTOs;
 class ItemRoutingNoteDTO
 {
     public function __construct(
-        public readonly ?string $title,
-        public readonly ?string $value,
+        public readonly ?string $title = null,
+        public readonly ?string $value = null,
+        public readonly ?RoutingDetailsDTO $routingDetails = null
     ) {}
 }

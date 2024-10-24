@@ -5,16 +5,25 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\ItemRoutingNoteDTO;
+use App\DTOs\RoutingDetailsDTO;
 use App\Models\ItemRouting;
 use App\Models\ItemRoutingNote;
 
 class ItemRoutingNoteService
 {
-    public function create(ItemRoutingNoteDTO $note, ItemRouting $itemRouting): ItemRoutingNote
+
+    public function getRoutingDetailData(string $routingDetails)
     {
-        $createdNote =  $itemRouting->notes()->create([
+        [$routingNo, $workCenterAbbr, $sequenceIndex] = explode('@', $routingDetails);
+
+        return new RoutingDetailsDTO($routingNo, $workCenterAbbr, +$sequenceIndex);
+    }
+    public function create(ItemRoutingNoteDTO $note): ItemRoutingNote
+    {
+        $createdNote =  ItemRoutingNote::create([
             'title' => $note->title,
-            'value' => $note->value
+            'value' => $note->value,
+            'routing_details' => $note->routingDetails->getRaw()
         ]);
 
         return $createdNote;

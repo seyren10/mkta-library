@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class BcJsonData
 {
-
     private array $jsonData;
     public function __construct(private ResponseInterface $response)
     {

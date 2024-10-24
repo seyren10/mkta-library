@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\MustBeValidRoutingDetails;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateNoteRequest extends FormRequest
@@ -23,7 +24,7 @@ class UpdateNoteRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|required',
-            'value' => 'sometimes|required'
+            'value' => 'sometimes|required',
         ];
     }
 }

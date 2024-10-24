@@ -2,17 +2,25 @@
 
 namespace App\Models;
 
+use App\Casts\RoutingDetails;
 use App\Enums\Sequence;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ItemRouting extends Model
 {
     use HasFactory;
+
+    protected function casts(): array
+    {
+        return [
+            'routing_details' => RoutingDetails::class
+        ];
+    }
 
     public function workCenter(): HasOne
     {
@@ -29,9 +37,9 @@ class ItemRouting extends Model
         return $this->morphMany(LibraryFile::class, 'filable');
     }
 
-    public function notes(): HasMany
+    public function notes()
     {
-        return $this->hasMany(ItemRoutingNote::class, 'routing_no', 'id');
+        return $this->hasMany(ItemRoutingNote::class, 'routing_details', 'routing_details');
     }
 
     /**

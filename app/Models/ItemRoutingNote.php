@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemRoutingNote extends Model
 {
+
     use HasFactory;
 
     protected $fillable = [
         'title',
-        'value'
+        'value',
+        'routing_details'
     ];
+
+    public const Separator = '@';
 }

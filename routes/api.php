@@ -6,6 +6,7 @@ use App\Http\Controllers\ItemBomController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\WorkCenterController;
 use App\Http\Controllers\ItemRoutingController;
+use App\Http\Controllers\ItemRoutingNoteController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -21,13 +22,15 @@ Route::middleware(['auth:sanctum'])
 
         Route::prefix('item-routings')->controller(ItemRoutingController::class)->group(function () {
             Route::get('', 'index');
-            Route::prefix('{item_routing}')->group(function () {
-                Route::get('', 'show');
-                Route::post('notes', 'storeNote');
-            });
-            Route::prefix('notes')->group(function () {
-                Route::put('{note}', 'updateNote');
-                Route::delete('{note}', 'destroyNote');
-            });
+            Route::get('{item_routing}', 'show');
         });
+
+        Route::prefix('notes')
+            ->controller(ItemRoutingNoteController::class)
+            ->group(function () {
+                Route::post('', 'store');
+                Route::get('{note}', 'show');
+                Route::put('{note}', 'update');
+                Route::delete('{note}', 'destroy');
+            });
     });

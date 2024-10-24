@@ -27,7 +27,7 @@ class RoutingController extends Controller
          * @var ItemRouting $routing 
          */
 
-        $routing = $item->itemRoutings()->with(['files', 'notes'])->findOrFail($id);
+        $routing = $item->itemRoutings()->with(['files','notes'])->findOrFail($id);
         $boms = $item->itemBoms()->with(['material'])->filterByWorkCenter($routing->work_center_abbr)->get();
 
         return new ItemRoutingResource($routing, $boms);
