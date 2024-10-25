@@ -20,11 +20,7 @@ class ItemRoutingNoteService
     }
     public function create(ItemRoutingNoteDTO $note): ItemRoutingNote
     {
-        $createdNote =  ItemRoutingNote::create([
-            'title' => $note->title,
-            'value' => $note->value,
-            'routing_details' => $note->routingDetails->getRaw()
-        ]);
+        $createdNote =  ItemRoutingNote::create($note->eloquentValues());
 
         return $createdNote;
     }
@@ -33,10 +29,7 @@ class ItemRoutingNoteService
     {
 
         return tap($itemRoutingNote, function ($note) use ($itemRoutingNoteDTO) {
-            $note->update([
-                'title' => $itemRoutingNoteDTO->title,
-                'value' => $itemRoutingNoteDTO->value
-            ]);
+            $note->update($itemRoutingNoteDTO->eloquentValues());
         });
     }
 }

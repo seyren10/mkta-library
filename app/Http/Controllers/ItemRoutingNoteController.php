@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\RoutingDetailsDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\ItemRoutingNote;
@@ -30,13 +29,7 @@ class ItemRoutingNoteController extends Controller
     {
         $validated = $request->validated();
 
-        $routingDetails = new RoutingDetailsDTO(
-            $validated['routing_no'],
-            $validated['work_center_abbr'],
-            $validated['sequence_index']
-        );
-
-        $note = new ItemRoutingNoteDTO($validated['title'], $validated['value'], $routingDetails);
+        $note = new ItemRoutingNoteDTO($validated['title'], $validated['value'], $validated['routing_details']);
 
         $createdNote = $this->itemRoutingNoteService->create($note);
 
@@ -48,9 +41,11 @@ class ItemRoutingNoteController extends Controller
     {
         $validated = $request->validated();
 
-        $noteDTO = new ItemRoutingNoteDTO($validated['title'], $validated['value']);
 
-        $updatedNote = $this->itemRoutingNoteService->update($note, $noteDTO);
+        $updatedNote = $this->itemRoutingNoteService->update(
+            $note,
+            new ItemRoutingNoteDTO($validated['title'] ?? null, $validated['value'] ?? null)
+        );
 
         return response()->json([
             'data' => $updatedNote
