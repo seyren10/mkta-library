@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Enums\FileType;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
 use App\Services\File\FileService;
 use App\Http\Requests\UploadImagesRequest;
 use App\Http\Requests\UploadDocumentsRequest;
@@ -77,11 +76,11 @@ class LibraryFileController extends Controller
         $routing = $item->itemRoutings()->findOrFail($id);
 
         /* determines where the files will be placed on the storage */
-        $path = $item->code . '/' . FileType::WorkCenters->value . '/' . $routing->work_center_abbr;
+        $path = $item->code . '/' . FileType::WorkCenters->value . '/' . $routing->work_center_abbr . '_' . $routing->process_index;
         $this->fileService
             ->storeAndAddMany($files, FileType::WorkCenters, $path)
             ->setModel($routing)
-            ->commit();
+            ->customCommit($routing);
 
         return response()->noContent();
     }

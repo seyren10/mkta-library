@@ -34,12 +34,12 @@ class ItemRouting extends Model
 
     public function files(): MorphMany
     {
-        return $this->morphMany(LibraryFile::class, 'filable');
+        return $this->morphMany(LibraryFile::class, 'filable', localKey: 'routing_details');
     }
 
     public function notes()
     {
-        return $this->hasMany(ItemRoutingNote::class, 'routing_details', 'routing_details');
+        return $this->hasMany(ItemRoutingNote::class, 'routing_details', 'routing_details')->orderByDesc('created_at');
     }
 
     /**

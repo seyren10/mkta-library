@@ -41,7 +41,6 @@ class fetch_bc_item_routings extends Command
 
         $itemRoutingService
             ->truncate();
-        // ->createItemRouting($itemRoutingChunkCollection);
         $data = $jsonResponse->values();
 
         while ($jsonResponse->hasNextLink()) {

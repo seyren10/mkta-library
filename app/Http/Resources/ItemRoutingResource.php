@@ -6,6 +6,7 @@ use App\Models\ItemRouting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Number;
 
 class ItemRoutingResource extends JsonResource
 {
@@ -21,7 +22,7 @@ class ItemRoutingResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data =  parent::toArray($request);
-        $data['work_center'] = $this->whenLoaded('workCenter', $this->workCenter);
+        $data['work_center'] = $this->whenLoaded('workCenter');
         $data['files'] = $this->whenLoaded('files', function () {
             return  LibraryFilesResource::collection($this->files);
         });

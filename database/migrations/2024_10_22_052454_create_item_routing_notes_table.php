@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('item_routing_notes', function (Blueprint $table) {
             $table->id();
-            $table->string('routing_details')->index()->comment('pipe separated value routing_no|work_center_abbr|sequence_index');
+            $table->string('routing_details')->index()->comment('pipe separated value routing_no@work_center_abbr@process_index');
             $table->text('title');
             $table->longText('value');
             $table->timestamps();

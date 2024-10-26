@@ -19,7 +19,7 @@ class ValidateRoutingDetails implements ValidationRule
         $noteRoutingDetails = (new ItemRoutingNoteService)->getRoutingDetailData($value);
         $routing = ItemRouting::where('routing_no', $noteRoutingDetails->routingNo)
             ->where('work_center_abbr', $noteRoutingDetails->workCenterAbbr)
-            ->where('sequence_index', $noteRoutingDetails->sequenceIndex)
+            ->where('process_index', $noteRoutingDetails->processIndex)
             ->first();
 
 

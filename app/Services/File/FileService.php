@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services\File;
 
+use App\DTOs\RoutingDetailsDTO;
 use App\Enums\FileType;
+use App\Models\LibraryFile;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\NoFilableRelationshipException;
+use App\Models\ItemRouting;
+use App\Services\ItemRoutingNoteService;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class FileService
@@ -87,9 +91,38 @@ class FileService
     {
         $this->checkModel();
 
-
         $this->model->files()->createMany($this->files
             ->map(fn($file) => ['path' => $file['path'], 'file_type' => $file['fileType'], 'name' => $file['name']]));
+        $this->files = new Collection();
+    }
+    public function customCommit(ItemRouting $itemRouting)
+    {
+        $this->checkModel();
+
+
+        $routingDetails = new RoutingDetailsDTO($itemRouting->routing_no, $itemRouting->work_center_abbr, $itemRouting->process_index);
+        $routingDetails = $routingDetails->getRaw();
+
+        $this->files->each(function ($file) use ($routingDetails) {
+            $fileModel =  new LibraryFile([
+                'path' => $file['path'],
+                'file_type' => $file['fileType'],
+                'name' => $file['name']
+            ]);
+
+            $fileModel->filable_type = $this->model::class;
+            $fileModel->filable_id = $routingDetails;
+            
+            $fileModel->save();
+        });
+
+
+        // $this->model->files()->createMany($this->files
+        //     ->map(function ($file) use ($itemRouting) {
+        //         $filableId = $routingDetails->getRaw();
+        //         info($filableId);
+        //         return ['path' => $file['path'], 'file_type' => $file['fileType'], 'name' => $file['name'], 'filable_id' => $filableId];
+        //     }));
         $this->files = new Collection();
     }
 

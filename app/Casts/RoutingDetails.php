@@ -18,7 +18,7 @@ class RoutingDetails implements CastsAttributes
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
 
-        $routingDetails = new RoutingDetailsDTO($model->routing_no, $model->work_center_abbr, $model->sequence_index);
+        $routingDetails = new RoutingDetailsDTO($model->routing_no, $model->work_center_abbr, $model->process_index);
         return $routingDetails->getRaw();
     }
 

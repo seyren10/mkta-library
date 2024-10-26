@@ -9,7 +9,7 @@ use App\Services\ItemService;
 use App\Services\MaterialService;
 use App\Services\WorkCentersService;
 use Illuminate\Support\Collection;
-
+use Illuminate\Support\Facades\Log;
 
 class BcDataTransformer
 {
@@ -111,7 +111,6 @@ class BcDataTransformer
         return $jsonData
             ->values()
             ->filter(function ($item) use ($bomCodes, $materialCodes, $workCenterAbbrs) {
-                // return (is_numeric($item['Quantity_per']) && $item['Quantity_per'] > 0.0) &&
                 return $bomCodes->contains($item['Production_BOM_No']) &&
                     $materialCodes->contains($item['No']) &&
                     $workCenterAbbrs->contains($item['Routing_Link_Code']);
@@ -137,7 +136,7 @@ class BcDataTransformer
         $routingNos = BcRoutingService::getRoutingNo();
         $workCenterAbbrs = WorkCentersService::getAbbrs();
 
-        return  $items
+        $newItems =   $items
             ->filter(function ($value) use ($routingNos, $workCenterAbbrs) {
                 return
                     !is_numeric($value['Operation_No']) &&
@@ -146,19 +145,33 @@ class BcDataTransformer
             })
             ->groupBy('Routing_No')
             ->map(function (Collection $items) {
+                $occurrenceCounts = [];
+
                 return $items
                     ->sortBy('Operation_No')
-                    ->map(function ($item, $index) {
+                    ->map(function ($item, $index) use (&$occurrenceCounts) {
+
+                        $linkCode = $item['Routing_Link_Code'];
+
+                        // Increment occurrence count for this Routing_Link_Code
+                        if (!isset($occurrenceCounts[$linkCode])) {
+                            $occurrenceCounts[$linkCode] = 0;
+                        }
+                        $occurrenceCounts[$linkCode]++;
+
                         return [
                             'routing_no' => $item['Routing_No'],
                             'work_center_abbr' => $item['Routing_Link_Code'],
                             'manpower' => $item['Concurrent_Capacities'],
                             'runtime' => $item['Run_Time'],
-                            'sequence_index' => $index
+                            'sequence_index' => $index,
+                            'process_index' => $occurrenceCounts[$linkCode]
                         ];
                     })
                     ->values(); // Re-indexes the collection after sorting
             })
             ->flatten(1);
+
+        return $newItems;
     }
 }
