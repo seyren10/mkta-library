@@ -24,6 +24,7 @@ Route::prefix('items')
                 Route::prefix('{id}')->group(function () {
                     Route::get('', 'show');
                     Route::post('files', [LibraryFileController::class, 'itemRoutingUploadFiles']);
+                    Route::delete('files/{library_file}', [LibraryFileController::class, 'itemRoutingDestroyFile']);
                 });
                 Route::get('sequence/{sequence_index}/next', 'nextSequence');
                 Route::get('sequence/{sequence_index}/prev', 'prevSequence');
@@ -32,9 +33,15 @@ Route::prefix('items')
         Route::prefix('{item}/files')
             ->controller(LibraryFileController::class)
             ->group(function () {
-                Route::get('documents', 'getDocuments');
-                Route::get('images', 'getImages');
-                Route::post('documents', 'uploadDocuments');
-                Route::post('images', 'uploadImages');
+                Route::prefix('documents')->group(function () {
+                    Route::get('', 'getDocuments');
+                    Route::post('', 'uploadDocuments');
+                    Route::delete('{library_file}', 'destroyDocument');
+                });
+                Route::prefix('images')->group(function () {
+                    Route::get('', 'getImages');
+                    Route::post('', 'uploadImages');
+                    Route::delete('{id}', 'destroyImage');
+                });
             });
     });

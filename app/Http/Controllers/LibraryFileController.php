@@ -10,8 +10,11 @@ use App\Http\Requests\UploadImagesRequest;
 use App\Http\Requests\UploadDocumentsRequest;
 use App\Http\Requests\ItemRoutingUploadFilesRequest;
 use App\Http\Resources\LibraryFilesResource;
+use App\Models\ItemRouting;
+use App\Models\LibraryFile;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class LibraryFileController extends Controller
 {
@@ -42,6 +45,15 @@ class LibraryFileController extends Controller
 
         return response()->noContent();
     }
+    public function destroyDocument(Item $item, LibraryFile $library_file): Response
+    {
+
+        if (Storage::delete($library_file->path)) {
+            $library_file->delete();
+        }
+
+        return response()->noContent();
+    }
 
     public function getImages(Item $item): JsonResource
     {
@@ -68,6 +80,20 @@ class LibraryFileController extends Controller
         return response()->noContent();
     }
 
+    public function destroyImage(Item $item, int|string  $id): Response
+    {
+        /**
+         * @var LibraryFile $image
+         */
+        $image =  $item->files()->findOrFail($id);
+
+        if ($image->file_type === FileType::Images &&  Storage::delete($image->path)) {
+            $image->delete();
+        }
+
+        return response()->noContent();
+    }
+
     public function itemRoutingUploadFiles(ItemRoutingUploadFilesRequest $request, Item $item, int|string $id): Response
     {
         $validated = $request->validated();
@@ -81,6 +107,22 @@ class LibraryFileController extends Controller
             ->storeAndAddMany($files, FileType::WorkCenters, $path)
             ->setModel($routing)
             ->customCommit($routing);
+
+        return response()->noContent();
+    }
+
+    public function itemRoutingDestroyFile(Item $item,  int $routingId, LibraryFile $library_file): Response
+    {
+        /**
+         * @var ItemRouting $itemRouting
+         */
+        $itemRouting = $item->itemRoutings()->findOrFail($routingId);
+        $filePath = $library_file->path;
+
+
+        if (Storage::delete($filePath)) {
+            $library_file->delete();
+        }
 
         return response()->noContent();
     }
