@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemBomController;
@@ -9,7 +10,7 @@ use App\Http\Controllers\ItemRoutingController;
 use App\Http\Controllers\ItemRoutingNoteController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+    return new UserResource($request->user()->load(['roles.permissions', 'permissions']));
 });
 
 Route::middleware(['auth:sanctum'])
