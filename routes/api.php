@@ -32,5 +32,5 @@ Route::middleware(['auth:sanctum'])
                 Route::get('{note}', 'show');
                 Route::put('{note}', 'update');
                 Route::delete('{note}', 'destroy');
-            });
+            })->middleware('');
     });

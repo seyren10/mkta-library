@@ -14,6 +14,7 @@ use App\Models\ItemRouting;
 use App\Models\LibraryFile;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class LibraryFileController extends Controller
@@ -29,6 +30,8 @@ class LibraryFileController extends Controller
     }
     public function uploadDocuments(UploadDocumentsRequest $request, Item $item): Response
     {
+        Gate::authorize('uploadDocuments', LibraryFile::class);
+
         $validated = $request->validated();
         $files = $validated['docs'];
 
@@ -47,6 +50,9 @@ class LibraryFileController extends Controller
     }
     public function destroyDocument(Item $item, LibraryFile $library_file): Response
     {
+
+        Gate::authorize('deleteDocument', $library_file);
+
 
         if (Storage::delete($library_file->path)) {
             $library_file->delete();
@@ -67,6 +73,8 @@ class LibraryFileController extends Controller
 
     public function uploadImages(UploadImagesRequest $request, Item $item): Response
     {
+        Gate::authorize('uploadImages', LibraryFile::class);
+
         $validated = $request->validated();
         $files = $validated['images'];
 
@@ -82,6 +90,7 @@ class LibraryFileController extends Controller
 
     public function destroyImage(Item $item, int|string  $id): Response
     {
+        Gate::authorize('deleteImage', LibraryFile::class);
         /**
          * @var LibraryFile $image
          */
@@ -96,6 +105,8 @@ class LibraryFileController extends Controller
 
     public function itemRoutingUploadFiles(ItemRoutingUploadFilesRequest $request, Item $item, int|string $id): Response
     {
+        Gate::authorize('uploadAttachments', LibraryFile::class);
+
         $validated = $request->validated();
         $files = $validated['docs'];
 
@@ -113,6 +124,7 @@ class LibraryFileController extends Controller
 
     public function itemRoutingDestroyFile(Item $item,  int $routingId, LibraryFile $library_file): Response
     {
+        Gate::authorize('deleteAttachment', $library_file);
         /**
          * @var ItemRouting $itemRouting
          */

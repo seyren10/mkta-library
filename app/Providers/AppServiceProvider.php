@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\ItemRoutingNote;
 use App\Models\WorkCenter;
+use App\Policies\ItemRoutingNotePolicy;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
 use App\Services\BusinessCentral\BusinessCentralApiToken;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {

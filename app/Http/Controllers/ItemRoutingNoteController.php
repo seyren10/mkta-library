@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\ItemRoutingNote;
 use App\DTOs\ItemRoutingNoteDTO;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Services\ItemRoutingNoteService;
@@ -27,8 +30,9 @@ class ItemRoutingNoteController extends Controller
 
     public function store(StoreNoteRequest $request)
     {
-        $validated = $request->validated();
+        Gate::authorize('create', ItemRoutingNote::class);
 
+        $validated = $request->validated();
         $note = new ItemRoutingNoteDTO($validated['title'], $validated['value'], $validated['routing_details']);
 
         $createdNote = $this->itemRoutingNoteService->create($note);
@@ -37,8 +41,12 @@ class ItemRoutingNoteController extends Controller
             'data' => $createdNote
         ]);
     }
+
     public function update(UpdateNoteRequest $request, ItemRoutingNote $note): JsonResponse
     {
+        Gate::authorize('update', $note);
+
+
         $validated = $request->validated();
 
 
@@ -53,6 +61,8 @@ class ItemRoutingNoteController extends Controller
     }
     public function destroy(UpdateNoteRequest $request, ItemRoutingNote $note): Response
     {
+        Gate::authorize('destroy', $note);
+
         $note->delete();
 
         return response()->noContent();
